@@ -27,6 +27,8 @@ podTemplate(
     name: 'tectonic-fluentd-kubernetes',
 ) {
     node('tectonic-fluentd-kubernetes') {
+        def isTectonicLoggingBranch = env.BRANCH_NAME == "tectonic_logging"
+
         stage('Checkout') {
             container('docker'){
                 sh 'apk add --no-cache git make'
@@ -41,11 +43,21 @@ podTemplate(
                 container('docker'){
                     echo "Authenticating to docker registry"
                     sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD quay.io"
-                    sh """
-                    make release-all \
-                        no-cache=yes \
-                        IMAGE_NAME=quay.io/coreos/fluentd-kubernetes
-                    """
+                    if (isTectonicLoggingBranch) {
+                        echo "Branch is ${env.BRANCH_NAME}, building, tagging, and pushing images"
+                        sh """
+                        make release-all \
+                            no-cache=yes \
+                            IMAGE_NAME=quay.io/coreos/fluentd-kubernetes
+                        """
+                    } else {
+                        echo "Building images, skipping tag/push"
+                        sh """
+                        make image-all \
+                            no-cache=yes \
+                            IMAGE_NAME=quay.io/coreos/fluentd-kubernetes
+                        """
+                    }
                 }
             }
         }

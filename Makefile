@@ -62,6 +62,20 @@ no-cache-arg = $(if $(call eq, $(no-cache), yes), --no-cache, $(empty))
 image:
 	docker build $(no-cache-arg) -t $(IMAGE_NAME):$(VERSION) docker-image/$(DOCKERFILE)
 
+
+# Make manual release of all supported Docker images to Docker Hub.
+#
+# Usage:
+#	make release-all [no-cache=(yes|no)]
+
+image-all:
+	(set -e ; $(foreach img,$(ALL_IMAGES), \
+		make image no-cache=$(no-cache) \
+			DOCKERFILE=$(word 1,$(subst :, ,$(img))) \
+			VERSION=$(word 1,$(subst $(comma), ,\
+			                 $(word 2,$(subst :, ,$(img))))) ; \
+	))
+
 # Tag Docker image with given tags.
 #
 # Usage:
