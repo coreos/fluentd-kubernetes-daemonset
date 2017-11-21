@@ -290,6 +290,6 @@ post-push-hook-all:
         src src-all \
         dockerfile dockerfile-all \
         fluent.conf fluent.conf-all \
-        kubernetes.conf kubernetes.conf-all\
+        kubernetes.conf kubernetes.conf-all \
         plugins plugins-all \
         post-push-hook post-push-hook-all

@@ -6,9 +6,9 @@ FROM fluent/fluentd:v0.12.39-debian
 MAINTAINER Eduardo Silva <eduardo@treasure-data.com>
 USER root
 WORKDIR /home/fluent
-ENV PATH /home/fluent/.gem/ruby/2.3.0/bin:$PATH
 
-RUN buildDeps="sudo make gcc g++ libc-dev ruby-dev libffi-dev" \
+RUN set -ex \
+     && buildDeps="sudo make gcc g++ libc-dev ruby-dev libffi-dev git net-tools" \
      && apt-get update \
      && apt-get upgrade -y \
      && apt-get install \
@@ -22,7 +22,8 @@ RUN buildDeps="sudo make gcc g++ libc-dev ruby-dev libffi-dev" \
     && gem install fluent-plugin-google-cloud \
     && gem install fluent-plugin-kubernetes_metadata_filter \
     && gem install ffi \
-    && gem install fluent-plugin-systemd -v 0.0.8 \
+    && gem install specific_install \
+    && gem specific_install -l https://github.com/chancez/fluent-plugin-systemd -b 0.8_handle_corrupted_logs \
     && SUDO_FORCE_REMOVE=yes \
     apt-get purge -y --auto-remove \
                   -o APT::AutoRemove::RecommendsImportant=false \
