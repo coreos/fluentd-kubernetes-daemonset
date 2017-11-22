@@ -5,7 +5,6 @@ FROM fluent/fluentd:v0.12.39
 MAINTAINER Eduardo Silva <eduardo@treasure-data.com>
 USER root
 WORKDIR /home/fluent
-ENV PATH /home/fluent/.gem/ruby/2.3.0/bin:$PATH
 
 RUN set -ex \
     && apk add --no-cache --virtual .build-deps \
